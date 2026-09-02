@@ -1,0 +1,893 @@
+/* Estilos principales - Tema Violeta Oscuro */
+
+/* Variables de colores y tamaños */
+:root {
+  --bg-main: #0b0714;
+  --bg-card: rgba(23, 16, 38, 0.85);
+  --bg-card-hover: rgba(32, 21, 54, 0.95);
+  --bg-nav: rgba(16, 10, 28, 0.92);
+  
+  --color-violet: #a855f7;
+  --color-violet-glow: rgba(168, 85, 247, 0.35);
+  --color-purple-light: #c084fc;
+  --color-magenta: #e879f9;
+  --color-cyan: #00f2fe;
+  --color-emerald: #10b981;
+  --color-crimson: #ff4757;
+  
+  --text-main: #f3e8ff;
+  --text-muted: #a78bfa;
+  --text-violet: #d8b4fe;
+  
+  --border-subtle: rgba(168, 85, 247, 0.2);
+  --border-focus: rgba(192, 132, 252, 0.6);
+  
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  
+  --shadow-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), 0 0 18px rgba(168, 85, 247, 0.12);
+}
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Fondo y fuente general de la página */
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  line-height: 1.6;
+  background-color: var(--bg-main);
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(168, 85, 247, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(232, 121, 249, 0.05) 0%, transparent 40%);
+  background-attachment: fixed;
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+/* Barra de navegación arriba */
+nav {
+  background: var(--bg-nav);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 2.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Logo */
+nav .logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, var(--color-purple-light) 0%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+nav .logo::before {
+  content: "🕮";
+  font-size: 1.5rem;
+  -webkit-text-fill-color: var(--color-purple-light);
+  filter: drop-shadow(0 0 8px var(--color-violet-glow));
+}
+
+/* Menú de opciones */
+nav ul {
+  display: flex;
+  list-style: none;
+  gap: 1.5rem;
+}
+
+nav ul li a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+/* Cuando pasás el mouse sobre una opción */
+nav ul li a:hover {
+  color: var(--text-main);
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+}
+
+/* Opción de la página activa (en la que estás parado) */
+nav ul li a.active,
+nav ul li a.activo {
+  color: #ffffff;
+  background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+  border: 1px solid var(--color-purple-light);
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.6);
+  font-weight: 700;
+}
+
+/* Paneles y secciones principales */
+section {
+  max-width: 1050px;
+  margin: 2.5rem auto;
+  padding: 2rem;
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-glow);
+  transition: border-color 0.3s ease;
+}
+
+section:hover {
+  border-color: rgba(168, 85, 247, 0.4);
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-violet);
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+h2::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(to bottom, var(--color-violet), var(--color-magenta));
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--color-violet-glow);
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+  margin: 2.5rem 0;
+}
+
+/* Formularios */
+fieldset {
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  padding: 1.8rem;
+  border-radius: var(--radius-md);
+  background: rgba(11, 7, 20, 0.5);
+}
+
+legend {
+  font-weight: 600;
+  padding: 0 12px;
+  color: var(--color-purple-light);
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+label {
+  display: inline-block;
+  width: 140px;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="tel"],
+input[type="email"],
+input[type="date"],
+select {
+  background: rgba(14, 10, 24, 0.85);
+  color: var(--text-main);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  width: calc(100% - 150px);
+  max-width: 420px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--color-purple-light);
+  box-shadow: 0 0 14px var(--color-violet-glow);
+  background: rgba(21, 15, 36, 0.95);
+}
+
+select option {
+  background-color: #150f24;
+  color: var(--text-main);
+}
+
+/* Botones general */
+button {
+  padding: 10px 22px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Botón principal (Guardar / Enviar) */
+button[type="submit"] {
+  background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.3);
+}
+
+button[type="submit"]:hover {
+  background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%);
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.45);
+  transform: translateY(-2px);
+}
+
+/* Botón secundario (Limpiar) */
+button[type="reset"] {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+button[type="reset"]:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+}
+
+/* Botones de acción en la tabla (Eliminar) */
+td button {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff6b81;
+  border: 1px solid rgba(255, 71, 87, 0.3);
+}
+
+td button:hover {
+  background: var(--color-crimson);
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 71, 87, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Tablas */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1.2rem;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+th, td {
+  padding: 14px 16px;
+  text-align: left;
+}
+
+th {
+  background: rgba(14, 10, 24, 0.95);
+  color: var(--color-purple-light);
+  font-weight: 600;
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 2px solid var(--border-subtle);
+}
+
+td {
+  background: rgba(23, 16, 38, 0.5);
+  color: var(--text-main);
+  font-size: 0.92rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.2s ease;
+}
+
+tr:hover td {
+  background: rgba(168, 85, 247, 0.08);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* Adaptación para pantallas chicas / celulares */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  section {
+    margin: 1rem;
+    padding: 1.2rem;
+  }
+
+  label {
+    display: block;
+    width: 100%;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="email"],
+  input[type="date"],
+  select {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* ============================================================
+   AGREGADOS DE LA CORRECCION
+   Se mantiene intacta la identidad visual original (violeta oscuro).
+   Lo que sigue resuelve problemas de USABILIDAD, no de estetica:
+   estados de carga/vacio/error, feedback sin alert(), tablas que
+   no se desbordan en celular, foco visible y edicion.
+   ============================================================ */
+
+/* ---------- Accesibilidad ---------- */
+
+/* Antes el foco se veia solo en inputs. Quien navega con teclado
+   perdia de vista donde estaba parado al llegar a un boton o link. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-purple-light);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Respeta la preferencia del sistema de reducir animaciones. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.solo-lectores {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Formularios ---------- */
+
+/* Reemplaza el label de 140px fijos + input con calc(100% - 150px).
+   Ese esquema se rompia con etiquetas largas y en pantallas chicas. */
+.campo {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.campo > label {
+  width: auto;
+  margin-bottom: 0;
+  text-align: right;
+}
+
+.campo > input,
+.campo > select,
+.campo > textarea {
+  width: 100%;
+  max-width: 100%;
+}
+
+.campo .ayuda {
+  grid-column: 2;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.campo .obligatorio {
+  color: var(--color-magenta);
+  margin-left: 3px;
+}
+
+/* Error de validacion junto al campo que lo produjo. */
+.campo.con-error > input,
+.campo.con-error > select {
+  border-color: var(--color-crimson);
+}
+
+.campo .error-campo {
+  grid-column: 2;
+  font-size: 0.82rem;
+  color: #ff8a95;
+}
+
+.acciones-formulario {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ---------- Botones ---------- */
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-secundario {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-violet);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-secundario:hover {
+  background: rgba(255, 255, 255, 0.13);
+  color: var(--text-main);
+}
+
+.btn-peligro {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff6b81;
+  border: 1px solid rgba(255, 71, 87, 0.3);
+}
+
+.btn-peligro:hover {
+  background: var(--color-crimson);
+  color: #fff;
+}
+
+.btn-chico {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  margin-right: 6px;
+}
+
+/* Los botones de tabla ya no son todos rojos: el estilo lo define la clase,
+   no el hecho de estar dentro de un <td>. Editar no es una accion destructiva. */
+td button {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  background: rgba(168, 85, 247, 0.14);
+  color: var(--text-violet);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+td button:hover {
+  background: rgba(168, 85, 247, 0.3);
+  color: #fff;
+  box-shadow: 0 0 12px var(--color-violet-glow);
+  transform: translateY(-1px);
+}
+
+td button.btn-peligro {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff6b81;
+  border-color: rgba(255, 71, 87, 0.3);
+}
+
+td button.btn-peligro:hover {
+  background: var(--color-crimson);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(255, 71, 87, 0.4);
+}
+
+/* ---------- Tablas ---------- */
+
+/* El catalogo tiene 9 columnas. Sin este contenedor la tabla se desborda
+   de la pantalla en celular y no hay forma de leer las ultimas columnas. */
+.envoltorio-tabla {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-sm);
+}
+
+.envoltorio-tabla table {
+  min-width: 720px;
+}
+
+td.numero,
+th.numero {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+td.acciones {
+  white-space: nowrap;
+}
+
+/* ---------- Estados de la tabla ---------- */
+
+/* Antes, si el servidor estaba caido, la tabla quedaba vacia para siempre
+   y el error solo aparecia en la consola del navegador. */
+.fila-mensaje td {
+  text-align: center;
+  padding: 36px 20px;
+  color: var(--text-muted);
+  background: transparent;
+}
+
+.fila-mensaje .titulo-mensaje {
+  display: block;
+  color: var(--text-violet);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.fila-mensaje.es-error .titulo-mensaje {
+  color: #ff8a95;
+}
+
+.cargando-linea {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg,
+    rgba(168, 85, 247, 0.08) 25%,
+    rgba(168, 85, 247, 0.20) 50%,
+    rgba(168, 85, 247, 0.08) 75%);
+  background-size: 200% 100%;
+  animation: brillo 1.4s ease-in-out infinite;
+}
+
+@keyframes brillo {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+/* ---------- Insignias de estado ---------- */
+
+.insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+/* El estado no se transmite solo por color: cada insignia lleva texto.
+   Un usuario con daltonismo veia dos circulitos indistinguibles. */
+.insignia::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.insignia-verde   { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+.insignia-ambar   { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.insignia-roja    { background: rgba(255, 71, 87, 0.15);  color: #ff6b81; }
+.insignia-violeta { background: rgba(168, 85, 247, 0.15); color: var(--text-violet); }
+.insignia-gris    { background: rgba(255, 255, 255, 0.07); color: var(--text-muted); }
+
+/* ---------- Barra de filtros ---------- */
+
+.barra-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.barra-filtros .filtro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.barra-filtros .filtro label {
+  width: auto;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.barra-filtros input,
+.barra-filtros select {
+  width: auto;
+  min-width: 200px;
+}
+
+.barra-filtros .crecer {
+  flex: 1;
+  min-width: 220px;
+}
+
+.barra-filtros .crecer input {
+  width: 100%;
+  max-width: none;
+}
+
+.contador-resultados {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-left: auto;
+  padding-bottom: 10px;
+}
+
+/* ---------- Avisos (reemplazan a alert()) ---------- */
+
+#contenedor-avisos {
+  position: fixed;
+  top: 84px;
+  right: 20px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: min(420px, calc(100vw - 40px));
+}
+
+.aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card-hover);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-subtle);
+  border-left: 4px solid var(--color-violet);
+  box-shadow: var(--shadow-glow);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  animation: entra-aviso 0.25s ease-out;
+}
+
+@keyframes entra-aviso {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.aviso.saliendo {
+  opacity: 0;
+  transform: translateX(24px);
+  transition: all 0.25s ease-in;
+}
+
+.aviso-exito  { border-left-color: var(--color-emerald); }
+.aviso-error  { border-left-color: var(--color-crimson); }
+.aviso-alerta { border-left-color: #f59e0b; }
+
+.aviso .cerrar {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 4px;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.aviso .cerrar:hover { color: var(--text-main); }
+
+/* Banner de servidor caido. Es informacion critica: si la API no responde,
+   el usuario tiene que saberlo antes de intentar cargar algo. */
+.banner-servidor {
+  display: none;
+  background: rgba(255, 71, 87, 0.12);
+  border-bottom: 1px solid rgba(255, 71, 87, 0.35);
+  color: #ff8a95;
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+}
+
+.banner-servidor.visible { display: block; }
+
+.banner-servidor code {
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--text-violet);
+}
+
+/* ---------- Modal de edicion ---------- */
+
+.fondo-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 3, 10, 0.75);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1500;
+}
+
+.fondo-modal.abierto { display: flex; }
+
+.modal {
+  background: #150f24;
+  border: 1px solid var(--border-focus);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glow);
+  width: min(560px, 100%);
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 1.8rem;
+  animation: sube-modal 0.2s ease-out;
+}
+
+@keyframes sube-modal {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal h3 {
+  color: var(--color-purple-light);
+  font-size: 1.2rem;
+  margin-bottom: 1.4rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* ---------- Panel de metricas del inicio ---------- */
+
+/* Antes estaba todo con style="" inline y colores a mano que ni siquiera
+   coincidian con las variables del tema. */
+.panel-metricas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+  margin-top: 1.6rem;
+}
+
+.metrica {
+  background: rgba(11, 7, 20, 0.55);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.4rem;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.metrica:hover {
+  border-color: var(--border-focus);
+  transform: translateY(-2px);
+}
+
+.metrica h3 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.6px;
+  margin-bottom: 0.5rem;
+}
+
+.metrica .valor {
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-purple-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.metrica .detalle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  min-height: 1.2em;
+}
+
+.metrica.alerta .valor { color: #fbbf24; }
+.metrica.critica .valor { color: #ff6b81; }
+
+.metrica a {
+  display: inline-block;
+  margin-top: 0.9rem;
+  color: var(--text-violet);
+  text-decoration: none;
+  font-size: 0.86rem;
+  border-bottom: 1px solid transparent;
+}
+
+.metrica a:hover {
+  color: var(--color-purple-light);
+  border-bottom-color: currentColor;
+}
+
+main {
+  max-width: 1050px;
+  margin: 2.5rem auto;
+  padding: 0 20px;
+}
+
+main > p {
+  color: var(--text-muted);
+  max-width: 62ch;
+}
+
+h1 {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.4rem;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 768px) {
+  .campo {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .campo > label { text-align: left; }
+  .campo .ayuda,
+  .campo .error-campo { grid-column: 1; }
+
+  .acciones-formulario { flex-direction: column-reverse; }
+  .acciones-formulario button { width: 100%; margin-right: 0; }
+
+  .barra-filtros { flex-direction: column; align-items: stretch; }
+  .barra-filtros input,
+  .barra-filtros select { min-width: 0; width: 100%; max-width: none; }
+  .contador-resultados { margin-left: 0; padding-bottom: 0; }
+
+  #contenedor-avisos {
+    top: auto;
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    max-width: none;
+  }
+
+  .modal { padding: 1.3rem; }
+}

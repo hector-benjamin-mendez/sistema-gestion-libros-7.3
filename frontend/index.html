@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel — Biblioteca Barrial</title>
+  <link rel="stylesheet" href="estilos.css">
+  <script src="app.js" defer></script>
+</head>
+
+<!-- data-pagina le dice a app.js que modulo arrancar. Antes cada HTML
+     traia su propio <script> inline con la logica repetida. -->
+<body data-pagina="inicio">
+
+  <nav>
+    <div class="logo">Biblioteca Barrial</div>
+    <ul>
+      <li><a href="index.html" class="activo" aria-current="page">Inicio</a></li>
+      <li><a href="libros.html">Libros</a></li>
+      <li><a href="socios.html">Socios</a></li>
+      <li><a href="prestamos.html">Préstamos</a></li>
+    </ul>
+  </nav>
+
+  <!-- Si la API no responde, el usuario se entera acá y no probando a ciegas. -->
+  <div id="banner-servidor" class="banner-servidor" role="alert">
+    No hay conexión con el servidor. Levantalo con <code>uvicorn server:app --reload</code> desde la carpeta <code>backend</code>.
+  </div>
+
+  <main>
+    <h1>Panel de control</h1>
+    <p>Estado actual de la colección, el padrón de socios y el material que está fuera de la biblioteca.</p>
+
+    <!-- Los cuatro numeros salen de un solo pedido a /api/catalogo/estadisticas,
+         resuelto con COUNT(*) en la base. Antes se descargaban los listados
+         completos de libros y socios solo para hacerles .length, y la tarjeta
+         de prestamos tenia un 0 escrito a mano en el HTML. -->
+    <div class="panel-metricas">
+
+      <div class="metrica">
+        <h3>Títulos en catálogo</h3>
+        <p class="valor" id="total-libros" aria-live="polite">—</p>
+        <p class="detalle" id="detalle-libros">cargando…</p>
+        <a href="libros.html">Gestionar catálogo</a>
+      </div>
+
+      <div class="metrica">
+        <h3>Socios activos</h3>
+        <p class="valor" id="total-socios" aria-live="polite">—</p>
+        <p class="detalle" id="detalle-socios">cargando…</p>
+        <a href="socios.html">Gestionar padrón</a>
+      </div>
+
+      <div class="metrica alerta">
+        <h3>Préstamos en curso</h3>
+        <p class="valor" id="total-prestamos" aria-live="polite">—</p>
+        <p class="detalle" id="detalle-prestamos">cargando…</p>
+        <a href="prestamos.html">Ver préstamos</a>
+      </div>
+
+      <div class="metrica" id="tarjeta-vencidos">
+        <h3>Préstamos vencidos</h3>
+        <p class="valor" id="total-vencidos" aria-live="polite">—</p>
+        <p class="detalle" id="detalle-vencidos">cargando…</p>
+        <a href="prestamos.html">Revisar atrasos</a>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Socios — Biblioteca Barrial</title>
+  <link rel="stylesheet" href="estilos.css">
+  <script src="app.js" defer></script>
+</head>
+
+<body data-pagina="socios">
+
+  <nav>
+    <div class="logo">Biblioteca Barrial</div>
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="libros.html">Libros</a></li>
+      <li><a href="socios.html" class="activo" aria-current="page">Socios</a></li>
+      <li><a href="prestamos.html">Préstamos</a></li>
+    </ul>
+  </nav>
+
+  <div id="banner-servidor" class="banner-servidor" role="alert">
+    No hay conexión con el servidor. Levantalo con <code>uvicorn server:app --reload</code> desde la carpeta <code>backend</code>.
+  </div>
+
+  <!-- ============ ALTA ============ -->
+  <section>
+    <form id="form-socio">
+      <fieldset>
+        <legend>Registrar un socio</legend>
+
+        <div class="campo">
+          <label for="nombre">Nombre<span class="obligatorio" aria-hidden="true">*</span></label>
+          <input type="text" id="nombre" required maxlength="100" autocomplete="given-name">
+        </div>
+
+        <div class="campo">
+          <label for="apellido">Apellido<span class="obligatorio" aria-hidden="true">*</span></label>
+          <input type="text" id="apellido" required maxlength="100" autocomplete="family-name">
+        </div>
+
+        <div class="campo">
+          <label for="dni">DNI<span class="obligatorio" aria-hidden="true">*</span></label>
+          <input type="text" id="dni" required inputmode="numeric" pattern="[0-9.]{7,11}"
+                 placeholder="38111222" autocomplete="off">
+          <span class="ayuda">Solo números, sin puntos. No puede repetirse.</span>
+        </div>
+
+        <!-- email es NOT NULL UNIQUE en la base. Antes el formulario lo
+             dejaba opcional y el error explotaba recién en MySQL como 500. -->
+        <div class="campo">
+          <label for="email">Email<span class="obligatorio" aria-hidden="true">*</span></label>
+          <input type="email" id="email" required maxlength="150"
+                 placeholder="socio@mail.com" autocomplete="email">
+        </div>
+
+        <div class="campo">
+          <label for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" maxlength="30" placeholder="11-4455-6677" autocomplete="tel">
+        </div>
+
+        <div class="campo">
+          <label for="id_rango">Rango<span class="obligatorio" aria-hidden="true">*</span></label>
+          <select id="id_rango" required>
+            <option value="">Cargando…</option>
+          </select>
+          <span class="ayuda">Define cuántos libros puede llevarse a la vez y por cuántos días.</span>
+        </div>
+
+        <div class="acciones-formulario">
+          <button type="reset" class="btn-secundario">Limpiar</button>
+          <button type="submit">Guardar socio</button>
+        </div>
+      </fieldset>
+    </form>
+  </section>
+
+  <!-- ============ LISTADO Y BUSCADOR ============ -->
+  <section>
+    <h2>Padrón</h2>
+
+    <div class="barra-filtros">
+      <div class="filtro crecer">
+        <label for="buscar-socio">Buscar</label>
+        <input type="search" id="buscar-socio" placeholder="Nombre, apellido o DNI…" autocomplete="off">
+      </div>
+
+      <!-- El filtro por defecto oculta a los dados de baja. Antes el
+           parámetro estaba invertido en el backend y el listado los mostraba
+           igual, haciendo que la tarjeta "Socios activos" contara de más. -->
+      <div class="filtro">
+        <label for="filtro-estado-socio">Estado</label>
+        <select id="filtro-estado-socio">
+          <option value="activos" selected>Solo activos</option>
+          <option value="todos">Todos, incluidos los de baja</option>
+        </select>
+      </div>
+
+      <span class="contador-resultados" id="contador-socios" aria-live="polite"></span>
+    </div>
+
+    <div class="envoltorio-tabla">
+      <table id="tabla-socios">
+        <caption class="solo-lectores">Padrón de socios con su estado de alta o baja</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="numero">ID</th>
+            <th scope="col">Socio</th>
+            <th scope="col">DNI</th>
+            <th scope="col">Email</th>
+            <th scope="col">Teléfono</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+</body>
+</html>

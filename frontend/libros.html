@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Libros — Biblioteca Barrial</title>
+  <link rel="stylesheet" href="estilos.css">
+  <script src="app.js" defer></script>
+</head>
+
+<body data-pagina="libros">
+
+  <nav>
+    <div class="logo">Biblioteca Barrial</div>
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="libros.html" class="activo" aria-current="page">Libros</a></li>
+      <li><a href="socios.html">Socios</a></li>
+      <li><a href="prestamos.html">Préstamos</a></li>
+    </ul>
+  </nav>
+
+  <div id="banner-servidor" class="banner-servidor" role="alert">
+    No hay conexión con el servidor. Levantalo con <code>uvicorn server:app --reload</code> desde la carpeta <code>backend</code>.
+  </div>
+
+  <!-- ============ ALTA ============ -->
+  <section>
+    <form id="form-libro">
+      <fieldset>
+        <legend>Registrar un libro</legend>
+
+        <div class="campo">
+          <label for="titulo">Título<span class="obligatorio" aria-hidden="true">*</span></label>
+          <input type="text" id="titulo" required maxlength="255" autocomplete="off">
+        </div>
+
+        <div class="campo">
+          <label for="isbn">ISBN</label>
+          <input type="text" id="isbn" maxlength="20" placeholder="9788445000472" autocomplete="off">
+          <span class="ayuda">Opcional. Se guarda sin guiones ni espacios.</span>
+        </div>
+
+        <!-- Antes acá se pedía "Editorial (ID): Ej: 1". Nadie sabe que
+             Minotauro es el 1. Los <select> se llenan desde /api/catalogo. -->
+        <div class="campo">
+          <label for="id_editorial">Editorial<span class="obligatorio" aria-hidden="true">*</span></label>
+          <select id="id_editorial" required>
+            <option value="">Cargando…</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="id_subgenero">Subgénero<span class="obligatorio" aria-hidden="true">*</span></label>
+          <select id="id_subgenero" required>
+            <option value="">Cargando…</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="autores_ids">Autores</label>
+          <select id="autores_ids" multiple size="4"></select>
+          <span class="ayuda">Mantené Cmd (o Ctrl) para elegir más de uno. Un libro puede tener varios autores.</span>
+        </div>
+
+        <div class="campo">
+          <label for="fecha_publicacion">Publicación<span class="obligatorio" aria-hidden="true">*</span></label>
+          <input type="date" id="fecha_publicacion" required>
+        </div>
+
+        <div class="campo">
+          <label for="idioma">Idioma</label>
+          <input type="text" id="idioma" value="Espanol" maxlength="50">
+        </div>
+
+        <div class="campo">
+          <label for="numero_edicion">Edición</label>
+          <input type="text" id="numero_edicion" value="1" maxlength="20" placeholder="1">
+        </div>
+
+        <div class="acciones-formulario">
+          <button type="reset" class="btn-secundario">Limpiar</button>
+          <button type="submit">Guardar libro</button>
+        </div>
+      </fieldset>
+    </form>
+  </section>
+
+  <!-- ============ LISTADO Y BUSCADOR ============ -->
+  <section>
+    <h2>Catálogo</h2>
+
+    <!-- Los tres filtros van al servidor como query params. Antes se
+         descargaba el catálogo entero y se filtraba con .filter() en el
+         navegador: para buscar entre 5000 libros había que bajarse los 5000. -->
+    <div class="barra-filtros">
+      <div class="filtro crecer">
+        <label for="buscar-libro">Buscar por título</label>
+        <input type="search" id="buscar-libro" placeholder="Escribí parte del título…" autocomplete="off">
+      </div>
+
+      <div class="filtro">
+        <label for="filtro-subgenero">Subgénero</label>
+        <select id="filtro-subgenero"><option value="">Todos</option></select>
+      </div>
+
+      <div class="filtro">
+        <label for="filtro-autor">Autor</label>
+        <select id="filtro-autor"><option value="">Todos</option></select>
+      </div>
+
+      <span class="contador-resultados" id="contador-libros" aria-live="polite"></span>
+    </div>
+
+    <div class="envoltorio-tabla">
+      <table id="tabla-libros">
+        <caption class="solo-lectores">Listado de libros del catálogo con sus autores, editorial y subgénero</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="numero">ID</th>
+            <th scope="col">Título</th>
+            <th scope="col">ISBN</th>
+            <th scope="col">Autores</th>
+            <th scope="col">Editorial</th>
+            <th scope="col">Subgénero</th>
+            <th scope="col">Publicación</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+</body>
+</html>

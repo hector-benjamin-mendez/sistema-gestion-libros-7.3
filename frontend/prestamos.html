@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Préstamos — Biblioteca Barrial</title>
+  <link rel="stylesheet" href="estilos.css">
+  <script src="app.js" defer></script>
+</head>
+
+<body data-pagina="prestamos">
+
+  <nav>
+    <div class="logo">Biblioteca Barrial</div>
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="libros.html">Libros</a></li>
+      <li><a href="socios.html">Socios</a></li>
+      <li><a href="prestamos.html" class="activo" aria-current="page">Préstamos</a></li>
+    </ul>
+  </nav>
+
+  <div id="banner-servidor" class="banner-servidor" role="alert">
+    No hay conexión con el servidor. Levantalo con <code>uvicorn server:app --reload</code> desde la carpeta <code>backend</code>.
+  </div>
+
+  <!-- ============ REGISTRAR PRÉSTAMO ============ -->
+  <section>
+    <form id="form-prestamo">
+      <fieldset>
+        <legend>Registrar un préstamo</legend>
+
+        <!-- Solo aparecen los socios activos: uno dado de baja no puede
+             retirar material. -->
+        <div class="campo">
+          <label for="id_socio">Socio<span class="obligatorio" aria-hidden="true">*</span></label>
+          <select id="id_socio" required>
+            <option value="">Cargando…</option>
+          </select>
+        </div>
+
+        <!-- Dos pasos, y es a propósito: se elige el TÍTULO y después la
+             COPIA FÍSICA concreta. Antes el formulario mandaba id_libro
+             cuando la API espera id_ejemplar. No se presta un libro, se
+             presta un ejemplar: es la distinción que sostiene todo el
+             modelo de datos. -->
+        <div class="campo">
+          <label for="id_libro">Título<span class="obligatorio" aria-hidden="true">*</span></label>
+          <select id="id_libro" required>
+            <option value="">Cargando…</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="id_ejemplar">Ejemplar<span class="obligatorio" aria-hidden="true">*</span></label>
+          <select id="id_ejemplar" required disabled>
+            <option value="">Elegí primero un título</option>
+          </select>
+          <span class="ayuda">Solo se listan los ejemplares disponibles de ese título.</span>
+        </div>
+
+        <!-- El formulario ya no pide fechas. La de préstamo es hoy y la de
+             vencimiento la calcula el backend con los dias_prestamo del rango
+             del socio. Antes se le pedían al usuario y el servidor las
+             ignoraba, lo que además contradecía la regla del rango. -->
+        <p class="ayuda" style="margin: 4px 0 0 172px;">
+          La fecha de vencimiento la calcula el sistema según el rango del socio.
+        </p>
+
+        <div class="acciones-formulario">
+          <button type="reset" class="btn-secundario">Limpiar</button>
+          <button type="submit" disabled>Registrar préstamo</button>
+        </div>
+      </fieldset>
+    </form>
+  </section>
+
+  <!-- ============ LISTADO ============ -->
+  <section>
+    <h2>Préstamos</h2>
+
+    <div class="barra-filtros">
+      <div class="filtro">
+        <label for="filtro-estado">Mostrar</label>
+        <select id="filtro-estado">
+          <option value="todos">Todos</option>
+          <option value="activos">En préstamo</option>
+          <option value="vencidos">Vencidos</option>
+          <option value="devueltos">Devueltos</option>
+        </select>
+      </div>
+
+      <span class="contador-resultados" id="contador-prestamos" aria-live="polite"></span>
+    </div>
+
+    <div class="envoltorio-tabla">
+      <table id="tabla-prestamos">
+        <caption class="solo-lectores">Préstamos registrados, con su estado y fecha de vencimiento</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="numero">ID</th>
+            <th scope="col">Socio</th>
+            <th scope="col">Título</th>
+            <th scope="col">Ejemplar</th>
+            <th scope="col">Retiro</th>
+            <th scope="col">Vence</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+</body>
+</html>
