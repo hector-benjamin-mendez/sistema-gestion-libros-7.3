@@ -1,0 +1,126 @@
+// Sistema de Gestión Bibliotecaria - Grupo 7.3
+// Diagrama entidad-relación, versión 2 (correcciones del profesor).
+//
+// Pegar en https://dbdiagram.io para generar el diagrama de la entrega.
+//
+// Cambios respecto del diagrama anterior:
+//   · Nace `titulo` (la obra)            -> corrección 1
+//   · `libro` pasa a ser la copia física -> correcciones 2 y 3
+//   · Se caen `ejemplar` y `subgenero`
+//   · Nacen `idioma` y `estado`          -> corrección 2
+//   · `libro_autor` pasa a `titulo_autor`
+
+Table genero {
+  id int [pk, increment]
+  nombre varchar(100) [not null, unique]
+}
+
+Table idioma {
+  id int [pk, increment]
+  nombre varchar(60) [not null, unique]
+}
+
+Table estado {
+  id int [pk, increment]
+  nombre varchar(40) [not null, unique]
+  permite_prestamo tinyint [not null, default: 0]
+  descripcion varchar(255) [null]
+  Note: 'disponible / prestado / en_reparacion / dañado / extraviado / baja'
+}
+
+Table grupo_editorial {
+  id int [pk, increment]
+  nombre varchar(100) [not null, unique]
+}
+
+Table editorial {
+  id int [pk, increment]
+  nombre varchar(100) [not null, unique]
+  direccion varchar(255) [null]
+  fecha_fundacion date [null]
+  id_grupo_editorial int [null]
+}
+
+Table autor {
+  id int [pk, increment]
+  nombre varchar(100) [not null, default: '']
+  apellido varchar(100) [not null]
+  fecha_nacimiento date [null]
+  fecha_fallecimiento date [null]
+  nacionalidad varchar(60) [null]
+  Indexes {
+    (apellido, nombre) [unique]
+  }
+}
+
+Table rango {
+  id int [pk, increment]
+  nombre varchar(100) [not null, unique]
+  max_prestamos int [not null]
+  dias_prestamo int [not null]
+}
+
+Table titulo {
+  id int [pk, increment]
+  nombre varchar(255) [not null, unique]
+  id_genero int [not null]
+  Note: 'La OBRA. "IT" existe una sola vez.'
+}
+
+Table titulo_autor {
+  id_titulo int [pk]
+  id_autor int [pk]
+}
+
+Table libro {
+  id int [pk, increment]
+  id_titulo int [not null]
+  id_editorial int [not null]
+  isbn varchar(20) [null]
+  id_estado int [not null]
+  edicion varchar(20) [null]
+  id_idioma int [not null]
+  codigo_inventario varchar(30) [null, unique]
+  fecha_alta date [not null]
+  Note: 'La COPIA FISICA. Tres copias de IT = tres filas. El ISBN NO es unico.'
+}
+
+Table socio {
+  id int [pk, increment]
+  nombre varchar(100) [not null]
+  apellido varchar(100) [not null]
+  dni varchar(15) [not null, unique]
+  email varchar(150) [not null, unique]
+  telefono varchar(30) [null]
+  id_rango int [not null]
+  fecha_alta date [not null]
+  fecha_baja date [null]
+  suspendido_hasta date [null]
+  Note: 'fecha_baja = se fue. suspendido_hasta = sancionado, vence solo.'
+}
+
+Table prestamos {
+  id int [pk, increment]
+  id_socio int [not null]
+  id_libro int [not null]
+  fecha_prestamo date [not null]
+  fecha_vencimiento date [not null]
+  fecha_devolucion date [null]
+  id_estado_devolucion int [null]
+  observaciones varchar(255) [null]
+  libro_en_curso int [null, unique]
+  Note: 'Se presta LA COPIA. id_estado_devolucion guarda como volvio.'
+}
+
+Ref: titulo.id_genero > genero.id
+Ref: editorial.id_grupo_editorial > grupo_editorial.id
+Ref: titulo_autor.id_titulo > titulo.id
+Ref: titulo_autor.id_autor > autor.id
+Ref: libro.id_titulo > titulo.id
+Ref: libro.id_editorial > editorial.id
+Ref: libro.id_estado > estado.id
+Ref: libro.id_idioma > idioma.id
+Ref: socio.id_rango > rango.id
+Ref: prestamos.id_socio > socio.id
+Ref: prestamos.id_libro > libro.id
+Ref: prestamos.id_estado_devolucion > estado.id

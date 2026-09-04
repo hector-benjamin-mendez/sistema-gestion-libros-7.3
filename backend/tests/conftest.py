@@ -1,4 +1,9 @@
-"""Fixtures compartidas por todos los tests de la capa de datos."""
+"""Fixtures compartidas por todos los tests de la capa de datos.
+
+Corren contra `biblioteca_test`, nunca contra `biblioteca`. Cada test se
+ejecuta dentro de una transacción que se deshace al terminar, así ningún
+test ve los datos de otro y la base queda siempre limpia.
+"""
 
 from datetime import date
 
@@ -8,8 +13,16 @@ from sqlalchemy.orm import Session
 
 from config.settings import TEST_DATABASE_URL
 from models import (
-    Genero, Subgenero, GrupoEditorial, Editorial,
-    Autor, Libro, Ejemplar, Rango, Socio,
+    Autor,
+    Editorial,
+    Estado,
+    Genero,
+    GrupoEditorial,
+    Idioma,
+    Libro,
+    Rango,
+    Socio,
+    Titulo,
 )
 
 
@@ -23,11 +36,6 @@ def engine():
 
 @pytest.fixture
 def session(engine):
-    """Sesion aislada por test.
-
-    Cada test corre dentro de una transaccion que se deshace al terminar,
-    asi ningun test ve los datos de otro y la base queda siempre limpia.
-    """
     conexion = engine.connect()
     transaccion = conexion.begin()
     sesion = Session(
@@ -45,57 +53,81 @@ def session(engine):
 
 
 @pytest.fixture
-def catalogo(session):
-    """Datos minimos para poder crear libros, socios y prestamos."""
-    genero = Genero(nombre="Ficcion")
-    subgenero = Subgenero(nombre="Ciencia Ficcion", genero=genero)
-    grupo = GrupoEditorial(nombre="Grupo Planeta")
-    editorial = Editorial(nombre="Minotauro", grupo_editorial=grupo)
-    autor = Autor(nombre="Frank", apellido="Herbert",
-                  fecha_nacimiento=date(1920, 10, 8), nacionalidad="Estadounidense")
-    rango = Rango(nombre="Estandar", max_prestamos=3, dias_prestamo=14)
+def estados(session):
+    """La tabla `estado` con los valores que usa el sistema.
 
-    session.add_all([subgenero, editorial, autor, rango])
+    Se crean acá y no se leen del seed porque los tests tienen que poder
+    correr sobre una base vacía.
+    """
+    filas = {
+        "disponible": Estado(nombre="disponible", permite_prestamo=True),
+        "prestado": Estado(nombre="prestado", permite_prestamo=False),
+        "en_reparacion": Estado(nombre="en_reparacion", permite_prestamo=False),
+        "dañado": Estado(nombre="dañado", permite_prestamo=False),
+        "baja": Estado(nombre="baja", permite_prestamo=False),
+    }
+    session.add_all(filas.values())
+    session.flush()
+    return filas
+
+
+@pytest.fixture
+def catalogo(session, estados):
+    """Datos mínimos para poder cargar títulos, copias, socios y préstamos."""
+    genero = Genero(nombre="Terror")
+    idioma = Idioma(nombre="Español")
+    grupo = GrupoEditorial(nombre="Penguin Random House")
+    editorial = Editorial(nombre="Plaza & Janés", grupo_editorial=grupo)
+    autor = Autor(nombre="Stephen", apellido="King",
+                  fecha_nacimiento=date(1947, 9, 21),
+                  nacionalidad="Estadounidense")
+    rango = Rango(nombre="Estándar", max_prestamos=3, dias_prestamo=14)
+
+    session.add_all([genero, idioma, editorial, autor, rango])
     session.flush()
 
     return {
-        "genero": genero, "subgenero": subgenero, "grupo": grupo,
+        "genero": genero, "idioma": idioma, "grupo": grupo,
         "editorial": editorial, "autor": autor, "rango": rango,
+        "estados": estados,
     }
 
 
 @pytest.fixture
-def libro(session, catalogo):
-    ejemplar_libro = Libro(
-        titulo="Dune", isbn="9788445000472",
-        id_subgenero=catalogo["subgenero"].id,
-        id_editorial=catalogo["editorial"].id,
-        fecha_publicacion=date(1965, 8, 1),
-        idioma="Espanol", numero_edicion="1",
-    )
-    ejemplar_libro.autores.append(catalogo["autor"])
-    session.add(ejemplar_libro)
+def titulo(session, catalogo):
+    """La obra IT, con su autor."""
+    obra = Titulo(nombre="IT", id_genero=catalogo["genero"].id)
+    obra.autores.append(catalogo["autor"])
+    session.add(obra)
     session.flush()
-    return ejemplar_libro
+    return obra
+
+
+@pytest.fixture
+def copia(session, titulo, catalogo):
+    """Una copia física de IT, disponible."""
+    libro = Libro(
+        id_titulo=titulo.id,
+        id_editorial=catalogo["editorial"].id,
+        id_idioma=catalogo["idioma"].id,
+        id_estado=catalogo["estados"]["disponible"].id,
+        isbn="9788497596718",
+        edicion="2",
+        codigo_inventario="INV-000001",
+        fecha_alta=date(2023, 4, 18),
+    )
+    session.add(libro)
+    session.flush()
+    return libro
 
 
 @pytest.fixture
 def socio(session, catalogo):
+    """Augusto, el del ejemplo de la corrección 3."""
     nuevo = Socio(
-        nombre="Lucia", apellido="Gimenez", dni="38111222",
-        email="lucia@test.com", id_rango=catalogo["rango"].id,
-        fecha_alta=date(2023, 2, 14),
-    )
-    session.add(nuevo)
-    session.flush()
-    return nuevo
-
-
-@pytest.fixture
-def ejemplar(session, libro):
-    nuevo = Ejemplar(
-        id_libro=libro.id, codigo_inventario="INV-0001",
-        estado="disponible", fecha_alta=date(2024, 3, 10),
+        nombre="Augusto", apellido="Peralta", dni="42444555",
+        email="augusto@test.com", id_rango=catalogo["rango"].id,
+        fecha_alta=date(2025, 3, 5),
     )
     session.add(nuevo)
     session.flush()

@@ -1,19 +1,36 @@
-"""Acceso a datos de la entidad Editorial."""
+"""Acceso a datos de la entidad Editorial.
 
-from sqlalchemy import select, func
+Corrección 5: la editorial se escribe, no se elige de una lista. Eso
+cambia tres cosas respecto de la versión anterior:
+
+  · `obtener_o_crear`  : el alta la crea sola si no existe.
+  · `id_grupo_editorial` pasa a ser opcional: nadie va a saber a qué
+    grupo pertenece "Ediciones del Barrio" mientras carga un libro.
+  · `sugerir`          : devuelve nombres parecidos a lo que se está
+    tipeando, para que el input pueda tener autocompletado y no se
+    generen "Minotauro" y "Minotauro SA" como dos editoriales.
+"""
+
+from datetime import date
+
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 
 from models import Editorial
 from utils.db_errors import RegistroNoEncontrado, traducir_errores
+from utils.texto import normalizar, normalizar_obligatorio
 
 _CAMPOS_EDITABLES = {"nombre", "direccion", "fecha_fundacion", "id_grupo_editorial"}
 
 
-def crear(session: Session, *, nombre: str, id_grupo_editorial: int,
-          direccion: str | None = None, fecha_fundacion = None) -> Editorial:
+def crear(session: Session, *, nombre: str, id_grupo_editorial: int | None = None,
+          direccion: str | None = None,
+          fecha_fundacion: date | None = None) -> Editorial:
     editorial = Editorial(
-        nombre=nombre, id_grupo_editorial=id_grupo_editorial,
-        direccion=direccion, fecha_fundacion=fecha_fundacion,
+        nombre=normalizar_obligatorio(nombre, "editorial"),
+        id_grupo_editorial=id_grupo_editorial,
+        direccion=normalizar(direccion),
+        fecha_fundacion=fecha_fundacion,
     )
     with traducir_errores():
         session.add(editorial)
@@ -32,6 +49,17 @@ def obtener_o_error(session: Session, editorial_id: int) -> Editorial:
     return editorial
 
 
+def obtener_por_nombre(session: Session, nombre: str) -> Editorial | None:
+    limpio = normalizar_obligatorio(nombre, "editorial")
+    return session.scalars(select(Editorial).where(Editorial.nombre == limpio)).first()
+
+
+def obtener_o_crear(session: Session, nombre: str) -> Editorial:
+    """Lo que usa el alta de material cuando la editorial llega tipeada."""
+    existente = obtener_por_nombre(session, nombre)
+    return existente if existente is not None else crear(session, nombre=nombre)
+
+
 def obtener_con_grupo(session: Session, editorial_id: int) -> Editorial | None:
     stmt = (
         select(Editorial)
@@ -41,26 +69,32 @@ def obtener_con_grupo(session: Session, editorial_id: int) -> Editorial | None:
     return session.scalars(stmt).first()
 
 
-def listar_por_grupo(session: Session, id_grupo: int,
-                     limite: int = 50, desplazamiento: int = 0) -> list[Editorial]:
+def sugerir(session: Session, texto: str, limite: int = 10) -> list[Editorial]:
+    """Para el autocompletado del input de texto.
+
+    Ordena por nombre y filtra por coincidencia parcial. Con 10
+    resultados alcanza: es una ayuda de tipeo, no un listado.
+    """
+    limpio = normalizar(texto)
+    if limpio is None:
+        return []
     stmt = (
         select(Editorial)
-        .where(Editorial.id_grupo_editorial == id_grupo)
+        .where(Editorial.nombre.like(f"%{limpio}%"))
         .order_by(Editorial.nombre)
         .limit(limite)
-        .offset(desplazamiento)
     )
     return list(session.scalars(stmt))
 
 
-def listar(session: Session, *, limite: int = 50, desplazamiento: int = 0) -> list[Editorial]:
-    stmt = (
-        select(Editorial)
-        .options(joinedload(Editorial.grupo_editorial))
-        .order_by(Editorial.nombre)
-        .limit(limite)
-        .offset(desplazamiento)
-    )
+def listar(session: Session, *, texto: str | None = None, id_grupo: int | None = None,
+           limite: int = 50, desplazamiento: int = 0) -> list[Editorial]:
+    stmt = select(Editorial).options(joinedload(Editorial.grupo_editorial))
+    if texto:
+        stmt = stmt.where(Editorial.nombre.like(f"%{texto.strip()}%"))
+    if id_grupo:
+        stmt = stmt.where(Editorial.id_grupo_editorial == id_grupo)
+    stmt = stmt.order_by(Editorial.nombre).limit(limite).offset(desplazamiento)
     return list(session.scalars(stmt).unique())
 
 
@@ -75,7 +109,11 @@ def actualizar(session: Session, editorial_id: int, **campos) -> Editorial:
     editorial = obtener_o_error(session, editorial_id)
     for campo, valor in campos.items():
         if campo not in _CAMPOS_EDITABLES:
-            raise ValueError(f"Campo no editable: {campo}")
+            raise ValueError(f"Campo no editable en Editorial: {campo}")
+        if campo == "nombre":
+            valor = normalizar_obligatorio(valor, "editorial")
+        if campo == "direccion":
+            valor = normalizar(valor)
         setattr(editorial, campo, valor)
     with traducir_errores():
         session.flush()
@@ -83,6 +121,7 @@ def actualizar(session: Session, editorial_id: int, **campos) -> Editorial:
 
 
 def eliminar(session: Session, editorial_id: int) -> None:
+    """Falla con ViolacionDeIntegridad si tiene copias cargadas."""
     editorial = obtener_o_error(session, editorial_id)
     with traducir_errores():
         session.delete(editorial)
